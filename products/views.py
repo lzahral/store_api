@@ -11,11 +11,12 @@ from .serializers import *
 
 
 class ProductsList(APIView):
-    serializer_class = ProductSerializer
+    serializer_class = ProductsSerializer
 
     def get(self, req):
-        products = Product.objects.all()
-        srz_data = ProductSerializer(instance=products, many=True).data
+        products = Product.objects.filter(is_active = True)
+        srz_data = ProductsSerializer(instance=products, many=True, context={
+                                     'request': req}).data
         return Response(srz_data, status=status.HTTP_200_OK)
 
 
@@ -40,9 +41,17 @@ class UpdateProduct(APIView):
             return Response(srz_data.data, status=status.HTTP_200_OK)
         return Response(srz_data.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class ProductDetail(APIView):
+    serializer_class = ProductSerializer
+
+    def get(self, req, pk):
+        product = get_object_or_404(Product, pk=pk)
+        srz_data = ProductSerializer(instance=product, context={
+                                     'request': req})
+        return Response(srz_data.data, status=status.HTTP_200_OK)
+    
 
 class DeleteProduct(APIView):
-    serializer_class = ProductSerializer
 
     def delete(self, req, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -50,22 +59,22 @@ class DeleteProduct(APIView):
         return Response({'message': 'product deleted'}, status=status.HTTP_200_OK)
 
 
-class TypeViewSet(viewsets.ViewSet):
-    queryset = ProductType.objects.all()
-    serializer_class = ProductTypeSerializer
+class CategoryViewSet(viewsets.ViewSet):
+    queryset = ProductCategory.objects.all()
+    serializer_class = ProductCategorySerializer
     def list(self, request):
-        data = ProductType.objects.all()
-        srz_data = ProductTypeSerializer(instance=data, many=True)
+        data = ProductCategory.objects.all()
+        srz_data = ProductCategorySerializer(instance=data, many=True)
         return Response(data=srz_data.data, status=status.HTTP_200_OK)
 
     def create(self, request):
-        srz_data = ProductTypeSerializer(data=request.data)
+        srz_data = ProductCategorySerializer(data=request.data)
         if srz_data.is_valid():
             srz_data.save()
             return Response(srz_data.data, status=status.HTTP_201_CREATED)
         return Response(srz_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk):
-        type = get_object_or_404(ProductTypeSerializer, pk=pk)
-        type.delete()
-        return Response({'message': 'productType deleted'}, status=status.HTTP_200_OK)
+        category = get_object_or_404(ProductCategorySerializer, pk=pk)
+        category.delete()
+        return Response({'message': 'productCategory deleted'}, status=status.HTTP_200_OK)
