@@ -3,6 +3,8 @@ from django.db import models
     
 class ProductCategory(models.Model):
     title = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='category_images/', null=True, blank=True)
+
 
     def __str__(self):
         return self.title
@@ -19,7 +21,7 @@ class Product(models.Model):
     only_at_razer = models.BooleanField(default=True)
     gift = models.ForeignKey(
         'self', null=True, blank=True, related_name='gift_for', on_delete=models.SET_NULL)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

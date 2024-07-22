@@ -64,7 +64,8 @@ class CategoryViewSet(viewsets.ViewSet):
     serializer_class = ProductCategorySerializer
     def list(self, request):
         data = ProductCategory.objects.all()
-        srz_data = ProductCategorySerializer(instance=data, many=True)
+        srz_data = ProductCategorySerializer(
+            instance=data, many=True, context={'request': request})
         return Response(data=srz_data.data, status=status.HTTP_200_OK)
 
     def create(self, request):
