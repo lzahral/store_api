@@ -14,10 +14,11 @@ class ProductCategory(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
+    quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(
         ProductCategory, related_name='products', on_delete=models.CASCADE)
-    discount_amount = models.IntegerField(default=0)
+    discount_amount = models.IntegerField(default=1)
     only_at_razer = models.BooleanField(default=True)
     gift = models.ForeignKey(
         'self', null=True, blank=True, related_name='gift_for', on_delete=models.SET_NULL)

@@ -14,7 +14,7 @@ class ProductsList(APIView):
     serializer_class = ProductsSerializer
 
     def get(self, req):
-        products = Product.objects.filter(is_active = True)
+        products = Product.objects.filter(is_active=True, quantity__gt=0)
         srz_data = ProductsSerializer(instance=products, many=True, context={
                                      'request': req}).data
         return Response(srz_data, status=status.HTTP_200_OK)
