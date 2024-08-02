@@ -1,6 +1,8 @@
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework import serializers
+
+from orders.models import OrderItem
 from .models import *
 
 
@@ -26,6 +28,10 @@ class ProductsSerializer(serializers.ModelSerializer):
     def get_tags(self, obj):
         current_time = timezone.now()
         days_passed = (current_time - obj.created_at).days
+        total_quantity = OrderItem.objects.filter(
+            product=obj, order__is_paid=True).aggregate(total=models.Sum('quantity'))['total']
+        if not total_quantity:
+            total_quantity=0
 
         tags = []
         if days_passed < 5:
@@ -34,10 +40,21 @@ class ProductsSerializer(serializers.ModelSerializer):
             tags.append(f'{obj.discount_amount}% OFF')
         if obj.only_at_razer:
             tags.append('ONLY AT RAZER')
+        if obj.fresh_off_the_line:
+            tags.append('FRESH OFF THE LINE')
+        if obj.final_round_gear:
+            tags.append('FINAL ROUND GEAR')
         if obj.gift:
             tags.append('GIFT WITH PURCHASE')
+        if total_quantity > 20:
+            tags.append('BEST SELLERS')
         return tags
         
+
+def get_total_quantity_of_product(product_id):
+    total_quantity = OrderItem.objects.filter(
+        product_id=product_id).aggregate(total=models.Sum('quantity'))['total']
+    return total_quantity if total_quantity is not None else 0
 
 class ProductSerializer(serializers.ModelSerializer):
     is_new = serializers.SerializerMethodField()

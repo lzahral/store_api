@@ -22,6 +22,8 @@ class Product(models.Model):
     only_at_razer = models.BooleanField(default=True)
     gift = models.ForeignKey(
         'self', null=True, blank=True, related_name='gift_for', on_delete=models.SET_NULL)
+    fresh_off_the_line = models.BooleanField(default=False)
+    final_round_gear = models.BooleanField(default=False)
     created_at = models.DateTimeField()
     is_active = models.BooleanField(default=True)
 
