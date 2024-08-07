@@ -6,16 +6,17 @@ from .models import Order, OrderItem
 
 class ProductSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
+    gift = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'image_url',
-                  'description', 'price', 'discount_amount']
+                  'description', 'price', 'discount_amount','gift']
 
     def get_image_url(self, obj):
         request = self.context.get('request')
         image = obj.images.first()
-        return request.build_absolute_uri(image.image.url)
+        return request.build_absolute_uri(image.image.url) if image else None
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -54,11 +55,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
         validated_data['order'] = order
         product = validated_data['product']
 
-        if product.gift:
-            OrderItem.objects.create(
-                order=order, product=product.gift, price=0, quantity=1)
-            # product.gift.quantity -= 1
-            # product.gift.save()
+        # if product.gift:
+        #     OrderItem.objects.create(
+        #         order=order, product=product.gift, price=0, quantity=1)
+        #     # product.gift.quantity -= 1
+        #     # product.gift.save()
 
         validated_data['price'] = (
             product.price * (1 - product.discount_amount / 100)

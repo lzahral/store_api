@@ -9,12 +9,11 @@ from .models import *
 class ProductsSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     image= serializers.SerializerMethodField()
-    # comments = serializers.SerializerMethodField()
-    # category = serializers.PrimaryKeyRelatedField()
+    gift = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Product
         fields = ['id','name', 'price', 'description',
-                  'tags', 'category', 'discount_amount', 'image','quantity']
+                  'tags', 'category','gift', 'discount_amount', 'image','quantity']
         
     def get_image(self, obj):
         request = self.context.get('request')

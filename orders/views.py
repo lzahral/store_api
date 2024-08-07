@@ -75,11 +75,11 @@ class DeleteItem(APIView):
     def delete(self, req, pk):
         item = get_object_or_404(OrderItem, pk=pk)
         order = item.order
-        gift = item.product.gift
-        if gift:
-            # gift.quantity += 1
-            # gift.save()
-            OrderItem.objects.get(order=order, product=gift).delete()
+        # gift = item.product.gift
+        # if gift:
+        #     # gift.quantity += 1
+        #     # gift.save()
+        #     OrderItem.objects.get(order=order, product=gift).delete()
         # item.product.quantity += item.quantity 
         # item.product.save()
         item.delete()
