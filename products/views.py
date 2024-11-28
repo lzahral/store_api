@@ -52,7 +52,6 @@ class ProductDetail(APIView):
     
 
 class DeleteProduct(APIView):
-
     def delete(self, req, pk):
         product = get_object_or_404(Product, pk=pk)
         product.delete()
